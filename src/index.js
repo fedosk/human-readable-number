@@ -1,4 +1,5 @@
 module.exports = function toReadable(number) {
+
     let units = {
         '0': 'zero',
         '1': 'one',
@@ -35,24 +36,27 @@ module.exports = function toReadable(number) {
         '80': 'eighty',
         '90': 'ninety'
     }
-    
-    if(number < 10) {
-      return units[String(number)]
-    }
-    if(number >= 10 && number < 20) {
-      return second_tens[String(number)]
-    }
-    if(number > 19 && number < 100 && number % 10 === 0){
-      return tens[String(number)]     
-    }
-    if(number > 99 && number < 1000 && number % 100 === 0){
-      return units[number / 100] + ' ' + 'hundred'   
-    }
 
-    let arr = String(number).split('').map(function(e, i, arr){
+
+    let arr = String(number).split('').map(function (e, i, arr) {
         return e * Math.pow(10, arr.length - i - 1)
+    }).map(function (e, i, arr) {
+        if (arr.length > 1 && e === 0) {
+            return ''
+        } else if (arr[i - 1] === 10) {
+            return ''
+        } else if (e < 10) {
+            return units[e]
+        } else if (e > 19 && e < 100) {
+            return tens[e]
+        } else if (e >= 100) {
+            return units[e / 100] + ' ' + 'hundred'
+        } else if (e === 10) {
+            return second_tens[e + +arr[i + 1]]
+        }
     })
 
+    return arr.filter(function (f) {
+        return f
+    }).join(' ')
 }
-
-console.log(toReadable(100))
